@@ -1,0 +1,552 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+    min-height: 100vh;
+    color: #ffffff;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+.container {
+    display: flex;
+    min-height: 100vh;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 20px;
+    gap: 20px;
+}
+
+.sidebar {
+    width: 350px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.profile-section {
+    background: rgba(30, 41, 59, 0.8);
+    backdrop-filter: blur(20px);
+    border-radius: 20px;
+    padding: 30px;
+    text-align: center;
+    border: 1px solid rgba(71, 85, 105, 0.5);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+.profile-avatar {
+    width: 80px;
+    height: 80px;
+    background: linear-gradient(45deg, #3b82f6, #8b5cf6);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 20px;
+    font-size: 30px;
+    box-shadow: 0 4px 16px rgba(59, 130, 246, 0.4);
+}
+
+.profile-section h2 {
+    font-size: 24px;
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+.info-card {
+    background: rgba(30, 41, 59, 0.8);
+    backdrop-filter: blur(20px);
+    border-radius: 20px;
+    padding: 25px;
+    border: 1px solid rgba(71, 85, 105, 0.5);
+    text-align: center;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+.card-icon {
+    font-size: 40px;
+    margin-bottom: 15px;
+}
+
+.info-card h3 {
+    font-size: 20px;
+    margin-bottom: 15px;
+    font-weight: 600;
+}
+
+.info-card p {
+    font-size: 14px;
+    line-height: 1.6;
+    opacity: 0.9;
+}
+
+.quick-reference {
+    background: rgba(30, 41, 59, 0.8);
+    backdrop-filter: blur(20px);
+    border-radius: 20px;
+    padding: 25px;
+    border: 1px solid rgba(71, 85, 105, 0.5);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+.quick-reference h3 {
+    font-size: 18px;
+    margin-bottom: 20px;
+    font-weight: 600;
+}
+
+.risk-levels {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.risk-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.risk-label {
+    font-size: 14px;
+    opacity: 0.9;
+}
+
+.risk-value {
+    font-weight: 600;
+    font-size: 14px;
+    padding: 4px 8px;
+    border-radius: 6px;
+}
+
+.risk-value.conservative {
+    background: rgba(34, 197, 94, 0.3);
+    color: #22c55e;
+}
+
+.risk-value.moderate {
+    background: rgba(251, 191, 36, 0.3);
+    color: #fbbf24;
+}
+
+.risk-value.aggressive {
+    background: rgba(239, 68, 68, 0.3);
+    color: #ef4444;
+}
+
+.main-content {
+    flex: 1;
+}
+
+.calculator-container {
+    background: rgba(30, 41, 59, 0.8);
+    backdrop-filter: blur(20px);
+    border-radius: 20px;
+    padding: 40px;
+    border: 1px solid rgba(71, 85, 105, 0.5);
+    height: fit-content;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+.calculator-container h1 {
+    font-size: 32px;
+    font-weight: 700;
+    margin-bottom: 30px;
+    text-align: center;
+}
+
+.input-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 25px;
+    margin-bottom: 30px;
+}
+
+.input-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.input-group label {
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.info-icon {
+    width: 16px;
+    height: 16px;
+    background: rgba(59, 130, 246, 0.3);
+    border: 1px solid rgba(59, 130, 246, 0.5);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    cursor: help;
+    color: #60a5fa;
+}
+
+.arrow {
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.arrow.down {
+    color: #ef4444;
+}
+
+.arrow.up {
+    color: #22c55e;
+}
+
+.optional {
+    font-size: 12px;
+    opacity: 0.7;
+    font-weight: normal;
+}
+
+.input-group input {
+    background: rgba(51, 65, 85, 0.8);
+    border: 1px solid rgba(71, 85, 105, 0.8);
+    border-radius: 12px;
+    padding: 14px 16px;
+    color: #ffffff;
+    font-size: 16px;
+    transition: all 0.3s ease;
+    min-height: 48px;
+}
+
+.input-group input:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+    background: rgba(51, 65, 85, 0.9);
+}
+
+.input-group input::placeholder {
+    color: rgba(148, 163, 184, 0.7);
+}
+
+.risk-buttons {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    position: relative;
+}
+
+.risk-btn {
+    background: rgba(51, 65, 85, 0.8);
+    border: 1px solid rgba(71, 85, 105, 0.8);
+    border-radius: 8px;
+    padding: 10px 14px;
+    color: #ffffff;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 500;
+    min-height: 40px;
+    min-width: 48px;
+}
+
+.risk-btn:hover {
+    background: rgba(71, 85, 105, 0.8);
+    border-color: #3b82f6;
+}
+
+.risk-btn.active {
+    background: linear-gradient(45deg, #3b82f6, #8b5cf6);
+    border-color: transparent;
+    font-weight: 600;
+    box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
+}
+
+.risk-buttons input {
+    width: 80px;
+    margin-left: 8px;
+}
+
+.percent-symbol {
+    font-size: 16px;
+    font-weight: 600;
+    margin-left: 8px;
+}
+
+.calculate-btn {
+    width: 100%;
+    background: linear-gradient(45deg, #3b82f6, #8b5cf6);
+    border: none;
+    border-radius: 12px;
+    padding: 18px;
+    color: #ffffff;
+    font-size: 18px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-bottom: 30px;
+    min-height: 56px;
+    box-shadow: 0 4px 16px rgba(59, 130, 246, 0.3);
+}
+
+.calculate-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(59, 130, 246, 0.4);
+}
+
+.calculate-btn:active {
+    transform: translateY(0);
+}
+
+.results {
+    background: rgba(15, 23, 42, 0.8);
+    border-radius: 16px;
+    padding: 25px;
+    border: 1px solid rgba(71, 85, 105, 0.5);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+}
+
+.result-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.result-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 0;
+    border-bottom: 1px solid rgba(71, 85, 105, 0.3);
+}
+
+.result-item:last-child {
+    border-bottom: none;
+}
+
+.result-label {
+    font-size: 14px;
+    color: #94a3b8;
+    font-weight: 500;
+}
+
+.result-value {
+    font-weight: 600;
+    font-size: 16px;
+    color: #ffffff;
+}
+
+.result-value.profit {
+    color: #22c55e;
+    font-weight: 700;
+}
+
+@media (max-width: 1024px) {
+    .container {
+        flex-direction: column;
+        padding: 15px;
+    }
+    
+    .sidebar {
+        width: 100%;
+        flex-direction: row;
+        overflow-x: auto;
+        gap: 15px;
+        padding-bottom: 10px;
+    }
+    
+    .sidebar > div {
+        min-width: 280px;
+        flex-shrink: 0;
+    }
+    
+    .input-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+    
+    .result-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .calculator-container {
+        padding: 30px;
+    }
+}
+
+@media (max-width: 768px) {
+    .container {
+        padding: 10px;
+        gap: 15px;
+    }
+    
+    .calculator-container {
+        padding: 20px;
+    }
+    
+    .sidebar {
+        flex-direction: column;
+        gap: 15px;
+    }
+    
+    .sidebar > div {
+        min-width: unset;
+    }
+    
+    .calculator-container h1 {
+        font-size: 24px;
+        margin-bottom: 25px;
+    }
+    
+    .profile-section {
+        padding: 20px;
+    }
+    
+    .profile-avatar {
+        width: 60px;
+        height: 60px;
+        font-size: 24px;
+    }
+    
+    .info-card, .quick-reference {
+        padding: 20px;
+    }
+    
+    .input-grid {
+        gap: 18px;
+    }
+    
+    .risk-buttons {
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+    
+    .risk-buttons input {
+        width: 100%;
+        margin-left: 0;
+        margin-top: 8px;
+    }
+    
+    .calculate-btn {
+        padding: 16px;
+        font-size: 16px;
+    }
+    
+    .results {
+        padding: 20px;
+    }
+    
+    .result-item {
+        padding: 12px 0;
+    }
+    
+    .result-label {
+        font-size: 13px;
+    }
+    
+    .result-value {
+        font-size: 15px;
+    }
+}
+
+@media (max-width: 480px) {
+    .container {
+        padding: 8px;
+    }
+    
+    .calculator-container {
+        padding: 15px;
+    }
+    
+    .calculator-container h1 {
+        font-size: 20px;
+    }
+    
+    .profile-section, .info-card, .quick-reference {
+        padding: 15px;
+    }
+    
+    .input-group input {
+        padding: 12px 14px;
+        font-size: 16px;
+    }
+    
+    .risk-btn {
+        padding: 8px 12px;
+        min-height: 36px;
+        font-size: 13px;
+    }
+    
+    .calculate-btn {
+        padding: 14px;
+        font-size: 16px;
+        min-height: 48px;
+    }
+    
+    .results {
+        padding: 15px;
+    }
+    
+    .result-grid {
+        gap: 15px;
+    }
+    
+    .result-item {
+        padding: 10px 0;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 5px;
+    }
+    
+    .result-value {
+        align-self: flex-end;
+    }
+}
+
+/* Touch-friendly improvements for mobile */
+@media (hover: none) and (pointer: coarse) {
+    .risk-btn {
+        min-height: 44px;
+        padding: 12px 16px;
+    }
+    
+    .calculate-btn {
+        min-height: 48px;
+    }
+    
+    .input-group input {
+        min-height: 44px;
+        padding: 14px 16px;
+    }
+    
+    .info-icon {
+        min-width: 24px;
+        min-height: 24px;
+    }
+}
+
+/* Dark scrollbar for webkit browsers */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: rgba(15, 23, 42, 0.5);
+}
+
+::-webkit-scrollbar-thumb {
+    background: rgba(71, 85, 105, 0.8);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: rgba(100, 116, 139, 0.8);
+}

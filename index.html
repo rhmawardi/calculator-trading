@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Crypto Position Calculator</title>
+    <link rel="stylesheet" href="styles.css">
+    <meta name="theme-color" content="#0f172a">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+</head>
+<body>
+    <div class="container">
+        <div class="sidebar">
+            <div class="profile-section">
+                <div class="profile-avatar">
+                    <span class="avatar-icon">📊</span>
+                </div>
+                <h2>Rizky's Trading Assistant</h2>
+            </div>
+            
+            <div class="info-card">
+                <div class="card-icon">📈</div>
+                <h3>Entry & Exit</h3>
+                <p>Your entry price is where you plan to buy, stop-loss is your safety net, and take-profit is your target. Plan these levels before entering any trade!</p>
+            </div>
+            
+            <div class="quick-reference">
+                <h3>⚡ Quick Reference</h3>
+                <div class="risk-levels">
+                    <div class="risk-item">
+                        <span class="risk-label">Conservative Risk:</span>
+                        <span class="risk-value conservative">1-2%</span>
+                    </div>
+                    <div class="risk-item">
+                        <span class="risk-label">Moderate Risk:</span>
+                        <span class="risk-value moderate">3-5%</span>
+                    </div>
+                    <div class="risk-item">
+                        <span class="risk-label">Aggressive Risk:</span>
+                        <span class="risk-value aggressive">5%+</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="main-content">
+            <div class="calculator-container">
+                <h1>Position Calculator</h1>
+                
+                <div class="input-grid">
+                    <div class="input-group">
+                        <label for="portfolioSize">Portfolio Size (USD) <span class="info-icon">?</span></label>
+                        <input type="number" id="portfolioSize" placeholder="10000" value="10000">
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="riskPercent">Risk Per Trade (%) <span class="info-icon">?</span></label>
+                        <div class="risk-buttons">
+                            <button class="risk-btn" data-risk="1">1%</button>
+                            <button class="risk-btn active" data-risk="2">2%</button>
+                            <button class="risk-btn" data-risk="5">5%</button>
+                            <input type="number" id="riskPercent" placeholder="2" value="2" min="0.1" max="100" step="0.1">
+                            <span class="percent-symbol">%</span>
+                        </div>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="leverage">Leverage <span class="info-icon">?</span></label>
+                        <input type="number" id="leverage" placeholder="10" value="10" min="1" max="125">
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="entryPrice">Entry Price (USD) <span class="arrow down">↓</span></label>
+                        <input type="number" id="entryPrice" placeholder="50000" value="50000" step="0.01">
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="stopLoss">Stop-Loss Price (USD) <span class="arrow down">↓</span></label>
+                        <input type="number" id="stopLoss" placeholder="48000" value="48000" step="0.01">
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="takeProfit">Take-Profit Price (USD) <span class="arrow up">↑</span> <span class="optional">(Optional)</span></label>
+                        <input type="number" id="takeProfit" placeholder="55000" value="55000" step="0.01">
+                    </div>
+                </div>
+                
+                <button class="calculate-btn" onclick="calculatePosition()">Calculate Position Size</button>
+                
+                <div class="results" id="results">
+                    <div class="result-grid">
+                        <div class="result-item">
+                            <span class="result-label">Position Size:</span>
+                            <span class="result-value" id="positionSize">$0.00</span>
+                        </div>
+                        <div class="result-item">
+                            <span class="result-label">Quantity:</span>
+                            <span class="result-value" id="quantity">0.00</span>
+                        </div>
+                        <div class="result-item">
+                            <span class="result-label">Risk Amount:</span>
+                            <span class="result-value" id="riskAmount">$0.00</span>
+                        </div>
+                        <div class="result-item">
+                            <span class="result-label">Potential Profit:</span>
+                            <span class="result-value profit" id="potentialProfit">$0.00</span>
+                        </div>
+                        <div class="result-item">
+                            <span class="result-label">Risk/Reward Ratio:</span>
+                            <span class="result-value" id="riskReward">1:0</span>
+                        </div>
+                        <div class="result-item">
+                            <span class="result-label">Margin Required:</span>
+                            <span class="result-value" id="marginRequired">$0.00</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="script.js"></script>
+</body>
+</html>
