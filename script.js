@@ -1,41 +1,93 @@
+let deferredInstallPrompt = null;
+
 // Initialize the calculator
 document.addEventListener('DOMContentLoaded', function() {
     // Setup risk button functionality
     setupRiskButtons();
-    
+
     // Setup real-time calculation
     setupRealTimeCalculation();
-    
+
+    // Setup app install button for Android/PWA-compatible browsers
+    setupInstallButton();
+
+    // Register service worker
+    registerServiceWorker();
+
     // Initial calculation
     calculatePosition();
 });
 
+function setupInstallButton() {
+    const installButton = document.getElementById('installButton');
+
+    window.addEventListener('beforeinstallprompt', (event) => {
+        event.preventDefault();
+        deferredInstallPrompt = event;
+        installButton.hidden = false;
+    });
+
+    installButton.addEventListener('click', async () => {
+        if (!deferredInstallPrompt) {
+            return;
+        }
+
+        deferredInstallPrompt.prompt();
+        const choiceResult = await deferredInstallPrompt.userChoice;
+
+        if (choiceResult.outcome !== 'accepted') {
+            installButton.hidden = false;
+            return;
+        }
+
+        deferredInstallPrompt = null;
+        installButton.hidden = true;
+    });
+
+    window.addEventListener('appinstalled', () => {
+        deferredInstallPrompt = null;
+        installButton.hidden = true;
+    });
+}
+
+function registerServiceWorker() {
+    if (!('serviceWorker' in navigator)) {
+        return;
+    }
+
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js').catch((error) => {
+            console.error('Service worker registration failed:', error);
+        });
+    });
+}
+
 function setupRiskButtons() {
     const riskButtons = document.querySelectorAll('.risk-btn');
     const riskInput = document.getElementById('riskPercent');
-    
+
     riskButtons.forEach(button => {
         button.addEventListener('click', function() {
             // Remove active class from all buttons
             riskButtons.forEach(btn => btn.classList.remove('active'));
-            
+
             // Add active class to clicked button
             this.classList.add('active');
-            
+
             // Update input value
             const riskValue = this.getAttribute('data-risk');
             riskInput.value = riskValue;
-            
+
             // Recalculate
             calculatePosition();
         });
     });
-    
+
     // Update button states when input changes
     riskInput.addEventListener('input', function() {
         const currentValue = this.value;
         let matchFound = false;
-        
+
         riskButtons.forEach(button => {
             if (button.getAttribute('data-risk') === currentValue) {
                 button.classList.add('active');
@@ -44,7 +96,7 @@ function setupRiskButtons() {
                 button.classList.remove('active');
             }
         });
-        
+
         // If no match found, remove active from all buttons
         if (!matchFound) {
             riskButtons.forEach(btn => btn.classList.remove('active'));
@@ -54,7 +106,7 @@ function setupRiskButtons() {
 
 function setupRealTimeCalculation() {
     const inputs = document.querySelectorAll('input[type="number"]');
-    
+
     inputs.forEach(input => {
         input.addEventListener('input', function() {
             // Add small delay to avoid excessive calculations
@@ -73,7 +125,7 @@ function calculatePosition() {
         const entryPrice = parseFloat(document.getElementById('entryPrice').value) || 0;
         const stopLoss = parseFloat(document.getElementById('stopLoss').value) || 0;
         const takeProfit = parseFloat(document.getElementById('takeProfit').value) || 0;
-        
+
         // Validate inputs
         if (portfolioSize <= 0 || riskPercent <= 0 || entryPrice <= 0 || stopLoss <= 0 || leverage <= 0) {
             updateResults({
@@ -86,13 +138,13 @@ function calculatePosition() {
             });
             return;
         }
-        
+
         // Calculate risk amount
         const riskAmount = portfolioSize * (riskPercent / 100);
-        
+
         // Calculate price difference for stop loss
         const stopLossDiff = Math.abs(entryPrice - stopLoss);
-        
+
         if (stopLossDiff === 0) {
             updateResults({
                 positionSize: 0,
@@ -104,27 +156,27 @@ function calculatePosition() {
             });
             return;
         }
-        
+
         // Calculate position size based on risk
         const quantity = riskAmount / stopLossDiff;
         const positionSize = quantity * entryPrice;
-        
+
         // Calculate margin required
         const marginRequired = positionSize / leverage;
-        
+
         // Calculate potential profit
         let potentialProfit = 0;
         let riskRewardRatio = '1:0';
-        
+
         if (takeProfit > 0) {
             const takeProfitDiff = Math.abs(takeProfit - entryPrice);
             potentialProfit = quantity * takeProfitDiff;
-            
+
             // Calculate risk/reward ratio
             const rewardRatio = takeProfitDiff / stopLossDiff;
             riskRewardRatio = `1:${rewardRatio.toFixed(2)}`;
         }
-        
+
         // Update results
         updateResults({
             positionSize: positionSize,
@@ -134,7 +186,7 @@ function calculatePosition() {
             riskReward: riskRewardRatio,
             marginRequired: marginRequired
         });
-        
+
     } catch (error) {
         console.error('Calculation error:', error);
         updateResults({
@@ -151,22 +203,22 @@ function calculatePosition() {
 function updateResults(results) {
     // Update position size
     document.getElementById('positionSize').textContent = formatCurrency(results.positionSize);
-    
+
     // Update quantity
     document.getElementById('quantity').textContent = formatNumber(results.quantity, 6);
-    
+
     // Update risk amount
     document.getElementById('riskAmount').textContent = formatCurrency(results.riskAmount);
-    
+
     // Update potential profit
     document.getElementById('potentialProfit').textContent = formatCurrency(results.potentialProfit);
-    
+
     // Update risk/reward ratio
     document.getElementById('riskReward').textContent = results.riskReward;
-    
+
     // Update margin required
     document.getElementById('marginRequired').textContent = formatCurrency(results.marginRequired);
-    
+
     // Add visual feedback
     const resultsContainer = document.getElementById('results');
     resultsContainer.style.transform = 'scale(0.98)';
@@ -194,7 +246,7 @@ function formatNumber(number, decimals = 2) {
 // Add tooltips for info icons
 document.addEventListener('DOMContentLoaded', function() {
     const infoIcons = document.querySelectorAll('.info-icon');
-    
+
     const tooltips = {
         'Portfolio Size (USD)': 'Total amount of capital you have available for trading',
         'Risk Per Trade (%)': 'Percentage of your portfolio you\'re willing to risk on this trade',
@@ -203,11 +255,11 @@ document.addEventListener('DOMContentLoaded', function() {
         'Stop-Loss Price (USD)': 'The price at which you\'ll exit to limit losses',
         'Take-Profit Price (USD)': 'The price at which you\'ll exit to secure profits'
     };
-    
+
     infoIcons.forEach(icon => {
         const label = icon.previousElementSibling.textContent.trim();
         const tooltipText = tooltips[label.replace(/\s*\?.*$/, '')];
-        
+
         if (tooltipText) {
             icon.title = tooltipText;
             icon.style.cursor = 'help';
@@ -225,11 +277,11 @@ document.addEventListener('keydown', function(event) {
 // Add input validation
 document.addEventListener('DOMContentLoaded', function() {
     const inputs = document.querySelectorAll('input[type="number"]');
-    
+
     inputs.forEach(input => {
         input.addEventListener('blur', function() {
             const value = parseFloat(this.value);
-            
+
             // Validate minimum values
             if (this.id === 'portfolioSize' && value < 0) {
                 this.value = 0;
