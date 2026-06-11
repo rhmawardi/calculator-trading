@@ -166,7 +166,7 @@ function calculatePosition() {
             return;
         }
 
-        const riskAmount = portfolioSize * (riskPercent / 100);
+        let riskAmount = portfolioSize * (riskPercent / 100);
         const stopLossDiff = Math.abs(entryPrice - stopLoss);
 
         if (stopLossDiff === 0) {
@@ -174,18 +174,31 @@ function calculatePosition() {
             return;
         }
 
-        const quantity = riskAmount / stopLossDiff;
-        const positionSize = quantity * entryPrice;
-        const marginRequired = positionSize / leverage;
+        let quantity = riskAmount / stopLossDiff;
+        let positionSize = quantity * entryPrice;
+        let marginRequired = positionSize / leverage;
+
+        // Ensure we don't exceed account balance
+        if (marginRequired > portfolioSize) {
+            marginRequired = portfolioSize;
+            positionSize = marginRequired * leverage;
+            quantity = positionSize / entryPrice;
+            riskAmount = quantity * stopLossDiff;
+        }
 
         let potentialProfit = 0;
         let riskRewardRatio = '1:0';
 
         if (takeProfit > 0) {
-            const takeProfitDiff = Math.abs(takeProfit - entryPrice);
-            potentialProfit = quantity * takeProfitDiff;
-            const rewardRatio = takeProfitDiff / stopLossDiff;
-            riskRewardRatio = `1:${rewardRatio.toFixed(2)}`;
+            const isLong = entryPrice > stopLoss;
+            const isValidTP = isLong ? takeProfit > entryPrice : takeProfit < entryPrice;
+            
+            if (isValidTP) {
+                const takeProfitDiff = Math.abs(takeProfit - entryPrice);
+                potentialProfit = quantity * takeProfitDiff;
+                const rewardRatio = takeProfitDiff / stopLossDiff;
+                riskRewardRatio = `1:${rewardRatio.toFixed(2)}`;
+            }
         }
 
         updateResults({ positionSize, quantity, riskAmount, potentialProfit, riskReward: riskRewardRatio, marginRequired });
