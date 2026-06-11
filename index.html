@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>Crypto Position Calculator</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
     <link rel="manifest" href="manifest.webmanifest">
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📊</text></svg>">
@@ -13,22 +16,39 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 </head>
 <body>
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+
+    <div class="ticker-bar">
+        <div class="ticker-label">Live</div>
+        <div class="ticker-track" id="tickerTrack">
+            <span class="ticker-item"><span class="ticker-symbol">BTC</span> <span class="ticker-price" id="btcPrice">---</span> <span class="ticker-change" id="btcChange"></span></span>
+            <span class="ticker-item"><span class="ticker-symbol">ETH</span> <span class="ticker-price" id="ethPrice">---</span> <span class="ticker-change" id="ethChange"></span></span>
+            <span class="ticker-item"><span class="ticker-symbol">SOL</span> <span class="ticker-price" id="solPrice">---</span> <span class="ticker-change" id="solChange"></span></span>
+            <span class="ticker-item"><span class="ticker-symbol">BNB</span> <span class="ticker-price" id="bnbPrice">---</span> <span class="ticker-change" id="bnbChange"></span></span>
+            <span class="ticker-item"><span class="ticker-symbol">XRP</span> <span class="ticker-price" id="xrpPrice">---</span> <span class="ticker-change" id="xrpChange"></span></span>
+        </div>
+        <div class="ticker-status" id="tickerStatus">●</div>
+    </div>
+
     <div class="container">
-        <div class="sidebar">
+        <aside class="sidebar">
             <div class="profile-section">
                 <div class="profile-avatar">
                     <span class="avatar-icon">📊</span>
                 </div>
                 <h2>Rizky's Trading Assistant</h2>
+                <p class="profile-tagline">Smart position sizing for smarter trades</p>
                 <button id="installButton" class="install-btn" hidden>📲 Install App</button>
             </div>
-            
+
             <div class="info-card">
                 <div class="card-icon">📈</div>
                 <h3>Entry & Exit</h3>
                 <p>Your entry price is where you plan to buy, stop-loss is your safety net, and take-profit is your target. Plan these levels before entering any trade!</p>
             </div>
-            
+
             <div class="quick-reference">
                 <h3>⚡ Quick Reference</h3>
                 <div class="risk-levels">
@@ -46,18 +66,32 @@
                     </div>
                 </div>
             </div>
-        </div>
-        
-        <div class="main-content">
+
+            <div class="market-stats">
+                <div class="stat-item">
+                    <span class="stat-label">24h Volume</span>
+                    <span class="stat-value" id="volume24h">---</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">BTC Dominance</span>
+                    <span class="stat-value" id="btcDominance">---</span>
+                </div>
+            </div>
+        </aside>
+
+        <main class="main-content">
             <div class="calculator-container">
-                <h1>Position Calculator</h1>
-                
+                <div class="calc-header">
+                    <h1>Position Calculator</h1>
+                    <span class="calc-badge">v2.0</span>
+                </div>
+
                 <div class="input-grid">
                     <div class="input-group">
                         <label for="portfolioSize">Portfolio Size (USD) <span class="info-icon">?</span></label>
                         <input type="number" id="portfolioSize" placeholder="10000" value="10000">
                     </div>
-                    
+
                     <div class="input-group">
                         <label for="riskPercent">Risk Per Trade (%) <span class="info-icon">?</span></label>
                         <div class="risk-buttons">
@@ -68,62 +102,96 @@
                             <span class="percent-symbol">%</span>
                         </div>
                     </div>
-                    
+
                     <div class="input-group">
                         <label for="leverage">Leverage <span class="info-icon">?</span></label>
                         <input type="number" id="leverage" placeholder="10" value="10" min="1" max="125">
                     </div>
-                    
+
                     <div class="input-group">
                         <label for="entryPrice">Entry Price (USD) <span class="arrow down">↓</span></label>
                         <input type="number" id="entryPrice" placeholder="50000" value="50000" step="0.01">
                     </div>
-                    
+
                     <div class="input-group">
                         <label for="stopLoss">Stop-Loss Price (USD) <span class="arrow down">↓</span></label>
                         <input type="number" id="stopLoss" placeholder="48000" value="48000" step="0.01">
                     </div>
-                    
+
                     <div class="input-group">
                         <label for="takeProfit">Take-Profit Price (USD) <span class="arrow up">↑</span> <span class="optional">(Optional)</span></label>
                         <input type="number" id="takeProfit" placeholder="55000" value="55000" step="0.01">
                     </div>
                 </div>
-                
-                <button class="calculate-btn" onclick="calculatePosition()">Calculate Position Size</button>
-                
+
+                <button class="calculate-btn" onclick="calculatePosition()">
+                    <span class="btn-icon">⚡</span>
+                    Calculate Position Size
+                </button>
+
                 <div class="results" id="results">
+                    <div class="results-header">
+                        <h3>Results</h3>
+                        <div class="risk-level-indicator" id="riskLevelIndicator">
+                            <span class="risk-dot" id="riskDot"></span>
+                            <span id="riskLevelText">Safe</span>
+                        </div>
+                    </div>
                     <div class="result-grid">
-                        <div class="result-item">
-                            <span class="result-label">Position Size:</span>
-                            <span class="result-value" id="positionSize">$0.00</span>
+                        <div class="result-card">
+                            <div class="result-card-icon">💰</div>
+                            <div class="result-card-body">
+                                <span class="result-label">Position Size</span>
+                                <span class="result-value" id="positionSize">$0.00</span>
+                                <div class="result-bar" id="positionBar"><div class="result-bar-fill"></div></div>
+                            </div>
                         </div>
-                        <div class="result-item">
-                            <span class="result-label">Quantity:</span>
-                            <span class="result-value" id="quantity">0.00</span>
+                        <div class="result-card">
+                            <div class="result-card-icon">📊</div>
+                            <div class="result-card-body">
+                                <span class="result-label">Quantity</span>
+                                <span class="result-value" id="quantity">0.00</span>
+                                <div class="result-bar" id="quantityBar"><div class="result-bar-fill"></div></div>
+                            </div>
                         </div>
-                        <div class="result-item">
-                            <span class="result-label">Risk Amount:</span>
-                            <span class="result-value" id="riskAmount">$0.00</span>
+                        <div class="result-card">
+                            <div class="result-card-icon">⚠️</div>
+                            <div class="result-card-body">
+                                <span class="result-label">Risk Amount</span>
+                                <span class="result-value" id="riskAmount">$0.00</span>
+                                <div class="result-bar" id="riskBar"><div class="result-bar-fill"></div></div>
+                            </div>
                         </div>
-                        <div class="result-item">
-                            <span class="result-label">Potential Profit:</span>
-                            <span class="result-value profit" id="potentialProfit">$0.00</span>
+                        <div class="result-card profit-card">
+                            <div class="result-card-icon">📈</div>
+                            <div class="result-card-body">
+                                <span class="result-label">Potential Profit</span>
+                                <span class="result-value profit" id="potentialProfit">$0.00</span>
+                                <div class="result-bar profit-bar" id="profitBar"><div class="result-bar-fill"></div></div>
+                            </div>
                         </div>
-                        <div class="result-item">
-                            <span class="result-label">Risk/Reward Ratio:</span>
-                            <span class="result-value" id="riskReward">1:0</span>
+                        <div class="result-card">
+                            <div class="result-card-icon">⚖️</div>
+                            <div class="result-card-body">
+                                <span class="result-label">Risk/Reward Ratio</span>
+                                <span class="result-value" id="riskReward">1:0</span>
+                                <div class="result-bar" id="rrBar"><div class="result-bar-fill"></div></div>
+                            </div>
                         </div>
-                        <div class="result-item">
-                            <span class="result-label">Margin Required:</span>
-                            <span class="result-value" id="marginRequired">$0.00</span>
+                        <div class="result-card">
+                            <div class="result-card-icon">🏦</div>
+                            <div class="result-card-body">
+                                <span class="result-label">Margin Required</span>
+                                <span class="result-value" id="marginRequired">$0.00</span>
+                                <div class="result-bar" id="marginBar"><div class="result-bar-fill"></div></div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
+        </main>
     </div>
-    
+
     <script src="script.js"></script>
 </body>
 </html>
