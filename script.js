@@ -162,29 +162,27 @@ function calculatePosition() {
         const takeProfit = parseFloat(document.getElementById('takeProfit').value) || 0;
 
         if (portfolioSize <= 0 || riskPercent <= 0 || entryPrice <= 0 || stopLoss <= 0 || leverage <= 0) {
-            updateResults({ positionSize: 0, quantity: 0, riskAmount: 0, potentialProfit: 0, riskReward: '1:0', marginRequired: 0 });
+            updateResults({ positionSize: 0, quantity: 0, riskAmount: 0, potentialProfit: 0, riskReward: '1:0', marginRequired: 0, marginWarning: false });
             return;
         }
 
-        let riskAmount = portfolioSize * (riskPercent / 100);
+        const riskAmount = portfolioSize * (riskPercent / 100);
         const stopLossDiff = Math.abs(entryPrice - stopLoss);
 
         if (stopLossDiff === 0) {
-            updateResults({ positionSize: 0, quantity: 0, riskAmount, potentialProfit: 0, riskReward: '1:0', marginRequired: 0 });
+            updateResults({ positionSize: 0, quantity: 0, riskAmount, potentialProfit: 0, riskReward: '1:0', marginRequired: 0, marginWarning: false });
             return;
         }
 
-        let quantity = riskAmount / stopLossDiff;
-        let positionSize = quantity * entryPrice;
-        let marginRequired = positionSize / leverage;
+        // Position size is purely based on risk — leverage does NOT affect it
+        const quantity = riskAmount / stopLossDiff;
+        const positionSize = quantity * entryPrice;
 
-        // Ensure we don't exceed account balance
-        if (marginRequired > portfolioSize) {
-            marginRequired = portfolioSize;
-            positionSize = marginRequired * leverage;
-            quantity = positionSize / entryPrice;
-            riskAmount = quantity * stopLossDiff;
-        }
+        // Leverage only determines how much margin is needed to hold the position
+        const marginRequired = positionSize / leverage;
+
+        // Warn if margin exceeds portfolio, but do NOT change position size
+        const marginWarning = marginRequired > portfolioSize;
 
         let potentialProfit = 0;
         let riskRewardRatio = '1:0';
@@ -192,7 +190,7 @@ function calculatePosition() {
         if (takeProfit > 0) {
             const isLong = entryPrice > stopLoss;
             const isValidTP = isLong ? takeProfit > entryPrice : takeProfit < entryPrice;
-            
+
             if (isValidTP) {
                 const takeProfitDiff = Math.abs(takeProfit - entryPrice);
                 potentialProfit = quantity * takeProfitDiff;
@@ -201,9 +199,9 @@ function calculatePosition() {
             }
         }
 
-        updateResults({ positionSize, quantity, riskAmount, potentialProfit, riskReward: riskRewardRatio, marginRequired });
+        updateResults({ positionSize, quantity, riskAmount, potentialProfit, riskReward: riskRewardRatio, marginRequired, marginWarning });
     } catch {
-        updateResults({ positionSize: 0, quantity: 0, riskAmount: 0, potentialProfit: 0, riskReward: '1:0', marginRequired: 0 });
+        updateResults({ positionSize: 0, quantity: 0, riskAmount: 0, potentialProfit: 0, riskReward: '1:0', marginRequired: 0, marginWarning: false });
     }
 }
 
@@ -221,6 +219,18 @@ function updateResults(results) {
     animateValue('marginRequired', prev.marginRequired || 0, results.marginRequired, formatCurrency, 'marginBar', calcMarginPercent);
 
     updateRiskIndicator(results.riskAmount, results.positionSize);
+
+    // Show margin warning if margin exceeds portfolio
+    const marginCard = document.getElementById('marginRequired')?.closest('.result-card');
+    if (marginCard) {
+        if (results.marginWarning) {
+            marginCard.classList.add('warning');
+            marginCard.title = 'Margin required exceeds your portfolio! Increase leverage or reduce risk.';
+        } else {
+            marginCard.classList.remove('warning');
+            marginCard.title = '';
+        }
+    }
 
     const container = document.getElementById('results');
     container.style.transform = 'scale(0.98)';
